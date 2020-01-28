@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use DB;
+use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
@@ -20,9 +21,18 @@ class ArticleController extends Controller
         return response()->json($article);
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        DB::insert("insert into articles (title, content) values ('this is stored title', 'this is stored content')");
+        $params = $request->all();
+
+        //パラメータが渡ってきてるか確認するためのdebugコード
+        //var_dump($params);
+        //exit;
+
+        $title = $params['title'];
+        $content = $params['content'];
+        $sql= "insert into articles (title, content) values (\"$title\", \"$content\")";
+        DB::insert($sql);
 
         return response()->json(['result' => 'ok']);
     }
