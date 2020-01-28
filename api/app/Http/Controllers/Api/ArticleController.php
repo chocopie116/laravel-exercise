@@ -22,6 +22,8 @@ class ArticleController extends Controller
 
     public function create()
     {
+        DB::insert("insert into articles (title, content) values ('this is stored title', 'this is stored content')");
+
         return response()->json(['result' => 'ok']);
     }
 }
