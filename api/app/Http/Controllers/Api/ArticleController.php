@@ -9,30 +9,28 @@ class ArticleController extends Controller
 {
     public function index()
     {
-        $articles  = DB::select('select * from articles');
+        $articles  = DB::table('articles')->get();
 
         return response()->json($articles);
     }
 
     public function show($id)
     {
-        $article  = DB::select("select * from articles where id = $id");
+        $article  = DB::table('articles')->where('id', '=', $id)->get();
 
-        return response()->json($article);
+        return response()->json($article[0]);
     }
 
     public function create(Request $request)
     {
         $params = $request->all();
-
-        //パラメータが渡ってきてるか確認するためのdebugコード
-        //var_dump($params);
-        //exit;
-
         $title = $params['title'];
         $content = $params['content'];
-        $sql= "insert into articles (title, content) values (\"$title\", \"$content\")";
-        DB::insert($sql);
+
+        DB::table('articles')->insert([
+             'title' => $title,
+             'content' => $content,
+        ]);
 
         return response()->json(['result' => 'ok']);
     }
