@@ -1,18 +1,32 @@
 <?php
 
-use Illuminate\Http\Request;
+Route::get('/articles', function () {
+    $entries = [
+        [
+            'id' => 1,
+            'title' => 'this is title',
+            'body' => 'this is article main content.'
+        ],
+        [
+            'id' => 2,
+            'title' => 'this is title',
+            'body' => 'this is article main content.'
+        ]
+    ];
+    return json_encode($entries);
+});
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/articles/{id}', function () {
+    $entries = [
+            'id' => 1,
+            'title' => 'this is title',
+            'body' => 'this is article main content.'
+    ];
+
+    return json_encode($entries);
+});
+
+Route::post('/articles', function () {
+    return json_encode(['result' => 'ok']);
 });
