@@ -24,8 +24,14 @@ class ArticleController extends Controller
     public function create(Request $request)
     {
         $params = $request->all();
-        $title = $params['title'];
-        $content = $params['content'];
+        $title = $params['title'] ?? '';
+        $content = $params['content'] ?? '';
+
+        $hasTitleError = $title === '' || mb_strlen($title) >= 20;
+        $hasContentError = $content === '' || mb_strlen($content) >= 30;
+        if ($hasTitleError || $hasContentError) {
+            return response()->json(['result' => 'error']);
+        }
 
         DB::table('articles')->insert([
              'title' => $title,
