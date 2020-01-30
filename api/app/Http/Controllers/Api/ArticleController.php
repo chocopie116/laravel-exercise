@@ -30,7 +30,7 @@ class ArticleController extends Controller
         $hasTitleError = $title === '' || mb_strlen($title) >= 20;
         $hasContentError = $content === '' || mb_strlen($content) >= 30;
         if ($hasTitleError || $hasContentError) {
-            return response()->json(['result' => 'error']);
+            return response()->json(['result' => 'error'], 400);
         }
 
         DB::table('articles')->insert([
