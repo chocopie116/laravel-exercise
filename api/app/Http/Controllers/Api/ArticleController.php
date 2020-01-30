@@ -9,14 +9,14 @@ class ArticleController extends Controller
 {
     public function index()
     {
-        $articles  = DB::table('articles')->get();
+        $articles  = DB::table('articles')->where('draft', '=', false)->get();
 
         return response()->json($articles);
     }
 
     public function show($id)
     {
-        $article  = DB::table('articles')->where('id', '=', $id)->get();
+        $article  = DB::table('articles')->where('id', '=', $id)->where('draft', '=', false)->get();
 
         return response()->json($article[0]);
     }
@@ -26,16 +26,19 @@ class ArticleController extends Controller
         $params = $request->all();
         $title = $params['title'] ?? '';
         $content = $params['content'] ?? '';
+        $draft = $params['draft'] ?? false;
 
         $hasTitleError = $title === '' || mb_strlen($title) >= 20;
         $hasContentError = $content === '' || mb_strlen($content) >= 30;
-        if ($hasTitleError || $hasContentError) {
+        $hasDraftError = !is_bool($draft);
+        if ($hasTitleError || $hasContentError || $hasDraftError) {
             return response()->json(['result' => 'error'], 400);
         }
 
         DB::table('articles')->insert([
              'title' => $title,
              'content' => $content,
+             'draft' => $draft,
         ]);
 
         return response()->json(['result' => 'ok']);
