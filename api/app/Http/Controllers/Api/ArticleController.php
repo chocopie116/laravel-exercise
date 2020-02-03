@@ -2,8 +2,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ArticleController extends Controller
 {
@@ -24,24 +25,22 @@ class ArticleController extends Controller
     public function create(Request $request)
     {
         $params = $request->all();
+
+        $validation = Validator::make($params, [
+            'title' => 'required|string|max:20',
+            'content' => 'required|string|max:30',
+            'draft' => 'boolean',
+            'hashtagIds.*' => 'integer'
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json(['result' => 'error'], 400);
+        }
+
         $title = $params['title'] ?? '';
         $content = $params['content'] ?? '';
         $draft = $params['draft'] ?? false;
         $hashtagIds = $params['hashtag_ids'] ?? [];
-
-        $hasTitleError = $title === '' || mb_strlen($title) >= 20;
-        $hasContentError = $content === '' || mb_strlen($content) >= 30;
-        $hasDraftError = !is_bool($draft);
-        $hasHashtagIdsError = false;
-        foreach ($hashtagIds as $hastagId) {
-            if (is_numeric($hastagId)) {
-                continue;
-            }
-            $hasHashtagIdsError = true;
-        }
-        if ($hasTitleError || $hasContentError || $hasDraftError || $hasHashtagIdsError) {
-            return response()->json(['result' => 'error'], 400);
-        }
 
         $articleId = DB::table('articles')->insertGetId([
              'title' => $title,
