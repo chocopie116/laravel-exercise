@@ -2,9 +2,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateArticleRequest;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class ArticleController extends Controller
 {
@@ -22,29 +21,20 @@ class ArticleController extends Controller
         return response()->json($article[0]);
     }
 
-    public function create(Request $request)
+    public function create(CreateArticleRequest $request)
     {
-        $params = $request->all();
+        /**
+         * バリデーション済のリクエストであることが担保されている
+         * validation終了後のパラメータが取得できる
+         */
+        $params = $request->validated();
 
-        $validation = Validator::make($params, [
-            'title' => 'required|string|max:20',
-            'content' => 'required|string|max:30',
-            'draft' => 'boolean',
-            'hashtagIds.*' => 'integer'
-        ]);
-
-        if ($validation->fails()) {
-            return response()->json(['result' => 'error'], 400);
-        }
-
-        $title = $params['title'] ?? '';
-        $content = $params['content'] ?? '';
         $draft = $params['draft'] ?? false;
         $hashtagIds = $params['hashtag_ids'] ?? [];
 
         $articleId = DB::table('articles')->insertGetId([
-             'title' => $title,
-             'content' => $content,
+             'title'   => $params['title'],
+             'content' => $params['content'],
              'draft' => $draft,
         ]);
 
