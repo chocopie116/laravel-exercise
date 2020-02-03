@@ -8,3 +8,5 @@ Route::post('/articles', 'Api\ArticleController@create');
 Route::get('/hashtags', 'Api\HashtagController@index');
 Route::get('/hashtags/{id}', 'Api\HashtagController@show');
 Route::post('/hashtags', 'Api\HashtagController@create');
+
+Route::get('/hashtags/{hashtag_id}/articles', 'Api\HashtagArticleController@index');
