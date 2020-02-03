@@ -1,12 +1,7 @@
 <?php
-
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
-
-class CreateHashtagRequest extends FormRequest
+class CreateHashtagRequest extends ApiRequest
 {
     public function authorize()
     {
@@ -18,12 +13,5 @@ class CreateHashtagRequest extends FormRequest
         return [
             'title' => 'required|string|max:20',
         ];
-    }
-
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'result' => 'error',
-        ], 400));
     }
 }
