@@ -2,8 +2,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use DB;
-use Illuminate\Http\Request;
+use App\Http\Requests\CreateHashtagRequest;
+use Illuminate\Support\Facades\DB;
 
 class HashtagController extends Controller
 {
@@ -21,18 +21,12 @@ class HashtagController extends Controller
         return response()->json($hashtags);
     }
 
-    public function create(Request $request)
+    public function create(CreateHashtagRequest $request)
     {
-        $params = $request->all();
-        $title = $params['title'] ?? '';
-
-        $hasTitleError = $title === '' || mb_strlen($title) >= 20;
-        if ($hasTitleError) {
-            return response()->json(['result' => 'error'], 400);
-        }
+        $params = $request->validated();
 
         DB::table('hashtags')->insert([
-             'title' => $title,
+             'title' => $params['title'],
         ]);
 
         return response()->json(['result' => 'ok']);
