@@ -43,4 +43,28 @@ class SessionController extends Controller
 
         return response()->json(['token' => $token]);
     }
+
+    public function destroy(Request $request)
+    {
+        $header = $request->header('Authorization');
+
+        if (is_null($header)) {
+            return response()->json(['result' => 'error'], 401);
+        }
+        $token = str_replace('Bearer ', '', $header);
+
+        $session = DB::table('sessions')
+            ->where('token', '=', $token)
+            ->first();
+
+        if (is_null($session)) {
+            return response()->json(['result' => 'error'], 401);
+        }
+
+        DB::table('sessions')
+            ->where('id', '=', $session->id)
+            ->delete();
+
+        return response()->json([], 204);
+    }
 }

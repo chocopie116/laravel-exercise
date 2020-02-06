@@ -15,3 +15,4 @@ Route::post('/images', 'Api\ImageController@create');
 Route::post('/users', 'Api\UserController@create');
 
 Route::post('/sessions', 'Api\SessionController@create');
+Route::delete('/sessions', 'Api\SessionController@destroy');
