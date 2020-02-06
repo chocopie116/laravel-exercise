@@ -61,8 +61,20 @@ class SessionController extends Controller
             return response()->json(['result' => 'error'], 401);
         }
 
+        /**
+         * ここ以降はログイン前提のコード
+         */
+        $p = $request->all();
+        $validation = Validator::make($p, [
+            'token' => 'required|string|max:50',
+        ]);
+        if ($validation->fails()) {
+            return response()->json(['result' => 'error'], 400);
+        }
+
         DB::table('sessions')
-            ->where('id', '=', $session->id)
+            ->where('token', '=', $p['token'])
+            ->where('user_id', '=', $session->user_id)
             ->delete();
 
         return response()->json([], 204);
