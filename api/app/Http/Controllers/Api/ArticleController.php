@@ -55,12 +55,14 @@ class ArticleController extends Controller
         $draft = $params['draft'] ?? false;
         $hashtagIds = $params['hashtag_ids'] ?? [];
         $imgUrl = $params['image_url'] ?? '';
+        $userId = $this->fetchUserId($request);
 
         $articleId = DB::table('articles')->insertGetId([
              'title' => $title,
              'content' => $content,
              'draft' => $draft,
              'header_image_url' => $imgUrl,
+             'user_id' => $userId
         ]);
 
         foreach ($hashtagIds as $hashtagId) {
