@@ -30,7 +30,8 @@ class ArticleController extends Controller
             'title' => 'required|string|max:20',
             'content' => 'required|string|max:30',
             'draft' => 'boolean',
-            'hashtagIds.*' => 'integer'
+            'hashtag_ids.*' => 'integer',
+            'image_url' => 'string|url',
         ]);
 
         if ($validation->fails()) {
@@ -41,11 +42,13 @@ class ArticleController extends Controller
         $content = $params['content'] ?? '';
         $draft = $params['draft'] ?? false;
         $hashtagIds = $params['hashtag_ids'] ?? [];
+        $imgUrl = $params['image_url'] ?? '';
 
         $articleId = DB::table('articles')->insertGetId([
              'title' => $title,
              'content' => $content,
              'draft' => $draft,
+             'header_image_url' => $imgUrl,
         ]);
 
         foreach ($hashtagIds as $hashtagId) {
