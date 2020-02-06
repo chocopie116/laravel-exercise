@@ -26,23 +26,6 @@ class ArticleController extends Controller
     public function create(Request $request)
     {
         $params = $request->all();
-        $header = $request->header('Authorization');
-
-        if (is_null($header)) {
-            return response()->json(['result' => 'error'], 401);
-        }
-        $token = str_replace('Bearer ', '', $header);
-
-        $session = DB::table('sessions')
-            ->where('token', '=', $token)
-            ->first();
-
-        if (is_null($session)) {
-            return response()->json(['result' => 'error'], 401);
-        }
-        /**
-         * ここ以降はログイン前提のコード
-         */
 
         $validation = Validator::make($params, [
             'title' => 'required|string|max:20',

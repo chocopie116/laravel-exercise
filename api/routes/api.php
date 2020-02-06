@@ -1,9 +1,13 @@
 <?php
 
+use App\Http\Middleware\CheckLogin;
+
 Route::get('/articles', 'Api\ArticleController@index');
 Route::get('/articles/{id}', 'Api\ArticleController@show');
-Route::post('/articles', 'Api\ArticleController@create');
 
+Route::group(['middleware' => [CheckLogin::class]], function () {
+    Route::post('/articles', 'Api\ArticleController@create');
+});
 
 Route::get('/hashtags', 'Api\HashtagController@index');
 Route::get('/hashtags/{id}', 'Api\HashtagController@show');
