@@ -46,24 +46,6 @@ class SessionController extends Controller
 
     public function destroy(Request $request)
     {
-        $header = $request->header('Authorization');
-
-        if (is_null($header)) {
-            return response()->json(['result' => 'error'], 401);
-        }
-        $token = str_replace('Bearer ', '', $header);
-
-        $session = DB::table('sessions')
-            ->where('token', '=', $token)
-            ->first();
-
-        if (is_null($session)) {
-            return response()->json(['result' => 'error'], 401);
-        }
-
-        /**
-         * ここ以降はログイン前提のコード
-         */
         $p = $request->all();
         $validation = Validator::make($p, [
             'token' => 'required|string|max:50',
@@ -72,9 +54,10 @@ class SessionController extends Controller
             return response()->json(['result' => 'error'], 400);
         }
 
+        $userId = $this->fetchUserId($request);
         DB::table('sessions')
             ->where('token', '=', $p['token'])
-            ->where('user_id', '=', $session->user_id)
+            ->where('user_id', '=', $userId)
             ->delete();
 
         return response()->json([], 204);

@@ -7,6 +7,7 @@ Route::get('/articles/{id}', 'Api\ArticleController@show');
 
 Route::group(['middleware' => [CheckLogin::class]], function () {
     Route::post('/articles', 'Api\ArticleController@create');
+    Route::delete('/sessions', 'Api\SessionController@destroy');
 });
 
 Route::get('/hashtags', 'Api\HashtagController@index');
@@ -19,4 +20,3 @@ Route::post('/images', 'Api\ImageController@create');
 Route::post('/users', 'Api\UserController@create');
 
 Route::post('/sessions', 'Api\SessionController@create');
-Route::delete('/sessions', 'Api\SessionController@destroy');
