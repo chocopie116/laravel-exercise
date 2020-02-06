@@ -12,3 +12,4 @@ Route::post('/hashtags', 'Api\HashtagController@create');
 Route::get('/hashtags/{hashtag_id}/articles', 'Api\HashtagArticleController@index');
 
 Route::post('/images', 'Api\ImageController@create');
+Route::post('/users', 'Api\UserController@create');
