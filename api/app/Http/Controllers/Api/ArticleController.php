@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -36,6 +37,17 @@ class ArticleController extends Controller
 
         if ($validation->fails()) {
             return response()->json(['result' => 'error'], 400);
+        }
+        $client = new Client();
+        $response = $client->get('https://yesno.wtf/api');
+        $json = $response->getBody()->getContents();
+        $result = json_decode($json, true);
+
+        if ($result['answer'] !== 'yes') {
+            return response()->json([
+                'result' => 'error',
+                'message' => "yesno.wtf didn't answer yes",
+            ], 400);
         }
 
         $title = $params['title'] ?? '';
