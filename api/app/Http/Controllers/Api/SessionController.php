@@ -54,10 +54,8 @@ class SessionController extends Controller
             return response()->json(['result' => 'error'], 400);
         }
 
-        $userId = $this->fetchUserId($request);
         DB::table('sessions')
             ->where('token', '=', $p['token'])
-            ->where('user_id', '=', $userId)
             ->delete();
 
         return response()->json([], 204);
