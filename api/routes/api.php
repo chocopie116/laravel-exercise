@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Middleware\CheckLogin;
-use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/articles', 'Api\ArticleController@index');
 Route::get('/articles/{id}', 'Api\ArticleController@show');
