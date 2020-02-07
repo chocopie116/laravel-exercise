@@ -2,9 +2,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\CompleteRegistrationMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -28,6 +30,8 @@ class UserController extends Controller
              'email'    => $params['email'],
              'password' => Hash::make($params['password']),
         ]);
+
+        Mail::to($params['email'])->send(new CompleteRegistrationMail($params['name']));
 
         return response()->json(['result' => 'ok']);
     }
