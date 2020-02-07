@@ -71,4 +71,56 @@ class MyArticleController extends Controller
 
         return response()->json(['result' => 'ok']);
     }
+
+    public function update(Request $request, $articleId)
+    {
+        $params = $request->all();
+
+        $validation = Validator::make($params, [
+            'title' => 'required|string|max:20',
+            'content' => 'required|string|max:30',
+            'draft' => 'boolean',
+            'hashtag_ids.*' => 'integer',
+            'image_url' => 'string|url',
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json(['result' => 'error'], 400);
+        }
+
+        $title = $params['title'] ?? '';
+        $content = $params['content'] ?? '';
+        $draft = $params['draft'] ?? false;
+        $hashtagIds = $params['hashtag_ids'] ?? [];
+        $imgUrl = $params['image_url'] ?? '';
+        $userId = $this->fetchUserId($request);
+
+        $article = DB::table('articles')->find($articleId);
+        if (is_null($article)) {
+            return response()->json([], 404);
+        }
+
+        $articleId = DB::table('articles')
+            ->where('id', '=', $articleId)
+            ->update([
+                 'title' => $title,
+                 'content' => $content,
+                 'draft' => $draft,
+                 'header_image_url' => $imgUrl,
+                 'user_id' => $userId
+            ]);
+
+        DB::table('hashtag_articles')
+            ->where('id', '=', $articleId)
+            ->delete();
+
+        foreach ($hashtagIds as $hashtagId) {
+            DB::table('hashtag_articles')->insert([
+                'article_id' => $articleId,
+                'hashtag_id' => $hashtagId,
+            ]);
+        }
+
+        return response()->json(['result' => 'ok']);
+    }
 }
