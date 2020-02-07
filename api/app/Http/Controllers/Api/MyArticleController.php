@@ -100,6 +100,11 @@ class MyArticleController extends Controller
             return response()->json([], 404);
         }
 
+        //自分以外のリソースの更新は不可能
+        if ($article->user_id !== $userId) {
+            return response()->json([], 404);
+        }
+
         $articleId = DB::table('articles')
             ->where('id', '=', $articleId)
             ->update([
