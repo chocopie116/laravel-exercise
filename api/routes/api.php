@@ -8,6 +8,8 @@ Route::get('/articles/{id}', 'Api\ArticleController@show');
 
 Route::group(['middleware' => [CheckLogin::class]], function () {
     Route::post('/articles', 'Api\ArticleController@create');
+    Route::get('/users/me/articles', 'Api\UserArticleController@mine');
+
     Route::delete('/sessions', 'Api\SessionController@destroy');
 });
 
