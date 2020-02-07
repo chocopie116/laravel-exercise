@@ -12,7 +12,7 @@ class UsersControllerTest extends TestCase
      *
      * @return void
      */
-    public function testパラメータないとバリデーションエラー()
+    public function testパラメータなしは400がかえる()
     {
         $response = $this->json('POST', '/api/users');
 
