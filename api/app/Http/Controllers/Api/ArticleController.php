@@ -74,4 +74,14 @@ class ArticleController extends Controller
 
         return response()->json(['result' => 'ok']);
     }
+
+    public function someones(Request $request, $userId)
+    {
+        $articles  = DB::table('articles')
+            ->where('user_id', '=', $userId)
+            ->where('draft', '=', false)
+            ->get();
+
+        return response()->json($articles);
+    }
 }
