@@ -7,7 +7,7 @@ Route::get('/articles', 'Api\ArticleController@index');
 Route::get('/articles/{id}', 'Api\ArticleController@show');
 
 Route::group(['middleware' => [CheckLogin::class]], function () {
-    Route::post('/articles', 'Api\ArticleController@create');
+    Route::post('/articles', 'Api\MyArticleController@create');
     Route::get('/users/me/articles', 'Api\MyArticleController@mine');
 
     Route::delete('/sessions', 'Api\SessionController@destroy');
