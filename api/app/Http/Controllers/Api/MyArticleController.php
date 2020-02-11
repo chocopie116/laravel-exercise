@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -54,19 +55,26 @@ class MyArticleController extends Controller
         $imgUrl = $params['image_url'] ?? '';
         $userId = $this->fetchUserId($request);
 
-        $articleId = DB::table('articles')->insertGetId([
-             'title' => $title,
-             'content' => $content,
-             'draft' => $draft,
-             'header_image_url' => $imgUrl,
-             'user_id' => $userId
-        ]);
-
-        foreach ($hashtagIds as $hashtagId) {
-            DB::table('hashtag_articles')->insert([
-                'article_id' => $articleId,
-                'hashtag_id' => $hashtagId,
+        DB::beginTransaction();
+        try {
+            $articleId = DB::table('articles')->insertGetId([
+                'title' => $title,
+                'content' => $content,
+                'draft' => $draft,
+                'header_image_url' => $imgUrl,
+                'user_id' => $userId
             ]);
+
+            foreach ($hashtagIds as $hashtagId) {
+                DB::table('hashtag_articles')->insert([
+                    'article_id' => $articleId,
+                    'hashtag_id' => $hashtagId,
+                ]);
+            }
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
 
         return response()->json(['result' => 'ok']);
@@ -105,7 +113,9 @@ class MyArticleController extends Controller
             return response()->json([], 404);
         }
 
-        $articleId = DB::table('articles')
+        DB::beginTransaction();
+        try {
+            $articleId = DB::table('articles')
             ->where('id', '=', $articleId)
             ->update([
                  'title' => $title,
@@ -115,15 +125,20 @@ class MyArticleController extends Controller
                  'user_id' => $userId
             ]);
 
-        DB::table('hashtag_articles')
+            DB::table('hashtag_articles')
             ->where('id', '=', $articleId)
             ->delete();
 
-        foreach ($hashtagIds as $hashtagId) {
-            DB::table('hashtag_articles')->insert([
-                'article_id' => $articleId,
-                'hashtag_id' => $hashtagId,
-            ]);
+            foreach ($hashtagIds as $hashtagId) {
+                DB::table('hashtag_articles')->insert([
+                    'article_id' => $articleId,
+                    'hashtag_id' => $hashtagId,
+                ]);
+            }
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
 
         return response()->json(['result' => 'ok']);
