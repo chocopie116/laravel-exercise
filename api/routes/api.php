@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\CheckLogin;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/articles', 'Api\ArticleController@index');
@@ -12,6 +13,15 @@ Route::group(['middleware' => [CheckLogin::class]], function () {
     Route::put('/articles/{articleId}', 'Api\MyArticleController@update');
 
     Route::delete('/sessions', 'Api\SessionController@destroy');
+});
+
+Route::get('/logging', function () {
+    Log::info('debug');
+    Log::info('info');
+    Log::warning('warning');
+    Log::error('error');
+
+    return Response()->json(['result' => 'ok']);
 });
 
 Route::get('/users/{userId}/articles', 'Api\ArticleController@someones');
