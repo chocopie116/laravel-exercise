@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Article;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -9,7 +10,7 @@ class ArticleController extends Controller
 {
     public function index()
     {
-        $articles  = DB::table('articles')->where('draft', '=', false)->get();
+        $articles  = Article::where('draft', false)->get();
 
         return response()->json($articles);
     }
