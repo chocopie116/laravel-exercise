@@ -10,7 +10,7 @@ class ArticleController extends Controller
 {
     public function index()
     {
-        $articles  = Article::where('draft', false)->get();
+        $articles  = Article::published()->get();
 
         return response()->json($articles);
     }
