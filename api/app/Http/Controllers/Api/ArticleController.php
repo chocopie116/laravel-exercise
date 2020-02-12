@@ -3,30 +3,33 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Article;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
     public function index()
     {
-        $articles  = Article::with(['user', 'hashtags'])->published()->get();
+        $articles  = Article::with(['user', 'hashtags'])
+            ->published()
+            ->get();
 
         return response()->json($articles);
     }
 
     public function show($id)
     {
-        $article  = DB::table('articles')->where('id', '=', $id)->where('draft', '=', false)->get();
+        $article  = Article::with(['user', 'hashtags'])
+            ->published()
+            ->findOrFail($id);
 
-        return response()->json($article[0]);
+        return response()->json($article);
     }
 
     public function someones(Request $request, $userId)
     {
-        $articles  = DB::table('articles')
+        $articles  = Article::with(['user', 'hashtags'])
+            ->published()
             ->where('user_id', '=', $userId)
-            ->where('draft', '=', false)
             ->get();
 
         return response()->json($articles);
