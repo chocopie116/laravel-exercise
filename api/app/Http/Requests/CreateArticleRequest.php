@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
 class CreateArticleRequest extends FormRequest
 {
@@ -23,12 +21,5 @@ class CreateArticleRequest extends FormRequest
             'draft' => 'boolean',
             'hashtagIds.*' => 'integer'
         ];
-    }
-
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'result' => 'error',
-        ], 400));
     }
 }
