@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Api;
 
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -29,24 +30,18 @@ class UserControllerTest extends TestCase
             'password' => 'password1234',
         ]);
 
-        $response->assertStatus(200);
-        $response->assertJson([
-            'result' => 'ok'
-        ]);
+        $response->assertStatus(200)
+            ->assertJson(['result' => 'ok']);
     }
 
     public function testユーザーが作成済のメールアドレスで登録したら400がかえる()
     {
+        $existsUser = factory(User::class)->create();
         $p = [
             'name'     => 'Labot Taro',
-            'email'    => 'labot@example.com',
+            'email'    => $existsUser->email,
             'password' => 'password1234',
         ];
-        $response = $this->json('POST', '/api/users', $p);
-        $response->assertStatus(200);
-        $response->assertJson([
-            'result' => 'ok'
-        ]);
 
         $response = $this->json('POST', '/api/users', $p);
         $response->assertStatus(400);
