@@ -12,6 +12,10 @@ class ArticleController extends Controller
     {
         $articles  = Article::published()->get();
 
+        foreach ($articles as $article) {
+            $article->user;
+        }
+
         return response()->json($articles);
     }
 
