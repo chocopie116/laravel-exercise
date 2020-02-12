@@ -10,11 +10,7 @@ class ArticleController extends Controller
 {
     public function index()
     {
-        $articles  = Article::published()->get();
-
-        foreach ($articles as $article) {
-            $article->user;
-        }
+        $articles  = Article::with(['user', 'hashtags'])->published()->get();
 
         return response()->json($articles);
     }
