@@ -4,15 +4,19 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
-use App\Models\Article;
 use App\Services\ArticleService;
-use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class MyArticleController extends Controller
 {
+    private $service;
+
+    public function __construct(ArticleService $service)
+    {
+        $this->service = $service;
+    }
+
     public function mine(Request $request)
     {
         $userId = $this->fetchUserId($request);
@@ -24,12 +28,12 @@ class MyArticleController extends Controller
         return response()->json($articles);
     }
 
-    public function create(CreateArticleRequest $request, ArticleService $service)
+    public function create(CreateArticleRequest $request)
     {
         $params = $request->validated();
         $userId = $this->fetchUserId($request);
 
-        $result = $service->create($params, $userId);
+        $result = $this->service->create($params, $userId);
         if ($result === false) {
             return response()->json([
                 'result' => 'error',
@@ -40,12 +44,12 @@ class MyArticleController extends Controller
         return response()->json(['result' => 'ok']);
     }
 
-    public function update(UpdateArticleRequest $request, $articleId, ArticleService $service)
+    public function update(UpdateArticleRequest $request, $articleId)
     {
         $params = $request->validated();
         $userId = $this->fetchUserId($request);
 
-        $service->update($params, $userId, $articleId);
+        $this->service->update($params, $userId, $articleId);
 
         return response()->json(['result' => 'ok']);
     }
