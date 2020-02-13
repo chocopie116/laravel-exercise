@@ -144,10 +144,28 @@ class MyArticleControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertExactJson(['result' => 'ok']);
     }
+
+    public function 存在しない記事の更新APIたたくと404がかえる()
+    {
+        $session = factory(Session::class)->create();
+
+        $response = $this->withHeaders([
+                'Authorization' => "Bearer $session->token"
+            ])
+            ->json('PUT', "/api/articles/{99999999999}", [
+                'title' => 'Updated title',
+                'content' => 'Updated Content',
+                'draft' => false,
+                'hashtag_ids.*' => [],
+            ]);
+
+        $response->assertStatus(404);
+    }
+
     /**
      * @test
      */
-    public function 他人の更新APIたたくと200がかえる()
+    public function 他人の更新APIたたくと404がかえる()
     {
         $session = factory(Session::class)->create();
         $otherArticle = factory(Article::class)->create();
