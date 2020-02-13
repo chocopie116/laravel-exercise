@@ -10,7 +10,7 @@ class ArticleService
 {
     private $client;
 
-    public function __construict(Client $client)
+    public function __construct(Client $client)
     {
         $this->client = $client;
     }

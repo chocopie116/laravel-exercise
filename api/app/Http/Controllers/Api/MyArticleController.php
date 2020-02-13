@@ -8,6 +8,7 @@ use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
 
 class MyArticleController extends Controller
@@ -28,8 +29,7 @@ class MyArticleController extends Controller
         $params = $request->validated();
         $userId = $this->fetchUserId($request);
 
-        $client = new Client();
-        $service = new ArticleService($client);
+        $service = App::make(ArticleService::class);
         $result = $service->create($params, $userId);
         if ($result === false) {
             return response()->json([
