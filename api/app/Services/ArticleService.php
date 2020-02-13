@@ -8,10 +8,16 @@ use Illuminate\Support\Facades\DB;
 
 class ArticleService
 {
+    private $client;
+
+    public function __construict(Client $client)
+    {
+        $this->client = $client;
+    }
+
     public function create($params, $userId)
     {
-        $client = new Client();
-        $response = $client->get('https://yesno.wtf/api');
+        $response = $this->client->get('https://yesno.wtf/api');
         $json = $response->getBody()->getContents();
         $result = json_decode($json, true);
 
