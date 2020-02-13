@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateArticleRequest;
 use App\Services\ArticleService;
 use Exception;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -28,8 +29,9 @@ class MyArticleController extends Controller
         $userId = $this->fetchUserId($request);
 
         $con = DB::connection();
+        $client = new Client();
         $service = new ArticleService();
-        $result = $service->create($params, $userId, $con);
+        $result = $service->create($params, $userId, $client, $con);
         if ($result === false) {
             return response()->json([
                 'result' => 'error',

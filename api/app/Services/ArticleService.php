@@ -9,9 +9,8 @@ use Illuminate\Database\Connection;
 
 class ArticleService
 {
-    public function create($params, $userId, Connection $con)
+    public function create($params, $userId, Client $client, Connection $con)
     {
-        $client = new Client();
         $response = $client->get('https://yesno.wtf/api');
         $json = $response->getBody()->getContents();
         $result = json_decode($json, true);
