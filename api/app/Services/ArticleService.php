@@ -5,10 +5,11 @@ namespace App\Services;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Connection;
 
 class ArticleService
 {
-    public function create($params, $userId)
+    public function create($params, $userId, Connection $con)
     {
         $client = new Client();
         $response = $client->get('https://yesno.wtf/api');
@@ -25,7 +26,7 @@ class ArticleService
         $hashtagIds = $params['hashtag_ids'] ?? [];
         $imgUrl = $params['image_url'] ?? '';
 
-        DB::beginTransaction();
+        $con->beginTransaction();
         try {
             $articleId = DB::table('articles')->insertGetId([
                 'title' => $title,
@@ -41,9 +42,9 @@ class ArticleService
                     'hashtag_id' => $hashtagId,
                 ]);
             }
-            DB::commit();
+            $con->commit();
         } catch (Exception $e) {
-            DB::rollBack();
+            $con->rollBack();
             throw $e;
         }
 

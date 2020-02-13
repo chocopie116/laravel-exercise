@@ -26,8 +26,10 @@ class MyArticleController extends Controller
     {
         $params = $request->validated();
         $userId = $this->fetchUserId($request);
+
+        $con = DB::connection();
         $service = new ArticleService();
-        $result = $service->create($params, $userId);
+        $result = $service->create($params, $userId, $con);
         if ($result === false) {
             return response()->json([
                 'result' => 'error',
