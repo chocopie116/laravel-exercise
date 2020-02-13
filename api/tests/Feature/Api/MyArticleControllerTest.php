@@ -86,8 +86,41 @@ class MyArticleControllerTest extends TestCase
      */
     public function 記事更新APIたたいてyesnoにYESといわれない場合400が返る()
     {
-        //yesno.wtfのAPIの結果に応じて200 or 400がでるのでテストがかけない
-        $this->markTestIncomplete();
+        $session = factory(Session::class)->create();
+
+        /**
+         * APIリクエストの結果をモックしている
+         */
+        $json = '{"answer":"no"}';
+        $mockClient = Mockery::mock(Client::class);
+        $mockResponse = Mockery::mock(ResponseInterface::class);
+        $mockBody = Mockery::mock(MessageInterface::class);
+        $mockBody->shouldReceive('getContents')
+            ->andReturn($json);
+        $mockResponse->shouldReceive('getBody')
+            ->andReturn($mockBody);
+        $mockClient->shouldReceive('get')
+            ->with('https://yesno.wtf/api')
+            ->andReturn($mockResponse);
+
+        //コンテナに登録されたClientクラスをmockClientで上書き
+        $this->instance(Client::class, $mockClient);
+
+        $response = $this->withHeaders([
+                'Authorization' => "Bearer $session->token"
+            ])
+            ->json('POST', "/api/articles/", [
+                'title' => 'Updated title',
+                'content' => 'Updated Content',
+                'draft' => false,
+                'hashtag_ids.*' => [],
+            ]);
+
+        $response->assertStatus(400);
+        $response->assertExactJson([
+            'result'=> 'error',
+            'message' => "yesno.wtf didn't answer yes",
+        ]);
     }
 
     /**
