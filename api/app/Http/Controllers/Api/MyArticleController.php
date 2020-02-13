@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateArticleRequest;
+use App\Http\Requests\UpdateArticleRequest;
 use App\Services\ArticleService;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -38,21 +39,10 @@ class MyArticleController extends Controller
         return response()->json(['result' => 'ok']);
     }
 
-    public function update(Request $request, $articleId)
+    public function update(UpdateArticleRequest $request, $articleId)
     {
-        $params = $request->all();
+        $params = $request->validated();
 
-        $validation = Validator::make($params, [
-            'title' => 'required|string|max:20',
-            'content' => 'required|string|max:30',
-            'draft' => 'boolean',
-            'hashtag_ids.*' => 'integer',
-            'image_url' => 'string|url',
-        ]);
-
-        if ($validation->fails()) {
-            return response()->json(['result' => 'error'], 400);
-        }
 
         $title = $params['title'] ?? '';
         $content = $params['content'] ?? '';
