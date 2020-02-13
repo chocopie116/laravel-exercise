@@ -6,7 +6,6 @@ use App\Http\Requests\CreateArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Models\Article;
 use App\Services\ArticleService;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class MyArticleController extends Controller
