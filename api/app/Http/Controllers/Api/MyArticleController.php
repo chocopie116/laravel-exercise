@@ -67,7 +67,7 @@ class MyArticleController extends Controller
         }
 
         //自分以外のリソースの更新は不可能
-        if ($article->user_id !== $userId) {
+        if ($article->user_id != $userId) {
             return response()->json([], 404);
         }
 
