@@ -4,7 +4,6 @@ namespace App\Services;
 
 use Exception;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Connection;
 
 class ArticleService
@@ -27,7 +26,7 @@ class ArticleService
 
         $con->beginTransaction();
         try {
-            $articleId = DB::table('articles')->insertGetId([
+            $articleId = $con->table('articles')->insertGetId([
                 'title' => $title,
                 'content' => $content,
                 'draft' => $draft,
@@ -36,7 +35,7 @@ class ArticleService
             ]);
 
             foreach ($hashtagIds as $hashtagId) {
-                DB::table('hashtag_articles')->insert([
+                $con->table('hashtag_articles')->insert([
                     'article_id' => $articleId,
                     'hashtag_id' => $hashtagId,
                 ]);
