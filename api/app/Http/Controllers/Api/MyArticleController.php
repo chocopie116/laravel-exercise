@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateArticleRequest;
 use App\Services\ArticleService;
 use Exception;
-use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -24,12 +23,12 @@ class MyArticleController extends Controller
         return response()->json($articles);
     }
 
-    public function create(CreateArticleRequest $request)
+    public function create(CreateArticleRequest $request, ArticleService $service)
     {
         $params = $request->validated();
         $userId = $this->fetchUserId($request);
 
-        $service = App::make(ArticleService::class);
+        // $service = App::make(ArticleService::class);
         $result = $service->create($params, $userId);
         if ($result === false) {
             return response()->json([
