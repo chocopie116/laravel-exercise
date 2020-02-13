@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateArticleRequest;
 use App\Services\ArticleService;
 use Exception;
-use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;

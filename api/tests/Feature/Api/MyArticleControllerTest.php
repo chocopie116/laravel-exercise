@@ -4,6 +4,10 @@ namespace Tests\Feature\Api;
 
 use App\Models\Article;
 use App\Models\Session;
+use GuzzleHttp\Client;
+use Mockery;
+use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\ResponseInterface;
 use Tests\TestCase;
 
 class MyArticleControllerTest extends TestCase
@@ -43,8 +47,38 @@ class MyArticleControllerTest extends TestCase
      */
     public function 記事作成APIたたいてyesnoにYESといわれたら200が返る()
     {
-        //yesno.wtfのAPIの結果に応じて200 or 400がでるのでテストがかけない
-        $this->markTestIncomplete();
+        $session = factory(Session::class)->create();
+
+        /**
+         * APIリクエストの結果をモックしている
+         */
+        $json = '{"answer":"yes","forced":false,"image":"https://example.com/dummy.png"}';
+        $mockClient = Mockery::mock(Client::class);
+        $mockResponse = Mockery::mock(ResponseInterface::class);
+        $mockBody = Mockery::mock(MessageInterface::class);
+        $mockBody->shouldReceive('getContents')
+            ->andReturn($json);
+        $mockResponse->shouldReceive('getBody')
+            ->andReturn($mockBody);
+        $mockClient->shouldReceive('get')
+            ->with('https://yesno.wtf/api')
+            ->andReturn($mockResponse);
+
+        //コンテナに登録されたClientクラスをmockClientで上書き
+        $this->instance(Client::class, $mockClient);
+
+        $response = $this->withHeaders([
+                'Authorization' => "Bearer $session->token"
+            ])
+            ->json('POST', "/api/articles/", [
+                'title' => 'Updated title',
+                'content' => 'Updated Content',
+                'draft' => false,
+                'hashtag_ids.*' => [],
+            ]);
+
+        $response->assertStatus(200);
+        $response->assertExactJson(['result' => 'ok']);
     }
 
     /**

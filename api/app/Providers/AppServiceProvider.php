@@ -15,9 +15,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(ArticleService::class, function () {
-            $client = new Client();
-            return new ArticleService($client);
+        $this->app->bind(ArticleService::class, function ($app) {
+            return new ArticleService($app->get(Client::class));
+        });
+
+        $this->app->bind(Client::class, function () {
+            return new Client();
         });
     }
 
