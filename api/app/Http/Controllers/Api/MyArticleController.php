@@ -3,8 +3,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateArticleRequest;
+use App\Services\ArticleService;
 use Exception;
-use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -25,46 +25,14 @@ class MyArticleController extends Controller
     public function create(CreateArticleRequest $request)
     {
         $params = $request->validated();
-
-        $client = new Client();
-        $response = $client->get('https://yesno.wtf/api');
-        $json = $response->getBody()->getContents();
-        $result = json_decode($json, true);
-
-        if ($result['answer'] !== 'yes') {
+        $userId = $this->fetchUserId($request);
+        $service = new ArticleService();
+        $result = $service->create($params, $userId);
+        if ($result === false) {
             return response()->json([
                 'result' => 'error',
                 'message' => "yesno.wtf didn't answer yes",
             ], 400);
-        }
-
-        $title = $params['title'] ?? '';
-        $content = $params['content'] ?? '';
-        $draft = $params['draft'] ?? false;
-        $hashtagIds = $params['hashtag_ids'] ?? [];
-        $imgUrl = $params['image_url'] ?? '';
-        $userId = $this->fetchUserId($request);
-
-        DB::beginTransaction();
-        try {
-            $articleId = DB::table('articles')->insertGetId([
-                'title' => $title,
-                'content' => $content,
-                'draft' => $draft,
-                'header_image_url' => $imgUrl,
-                'user_id' => $userId
-            ]);
-
-            foreach ($hashtagIds as $hashtagId) {
-                DB::table('hashtag_articles')->insert([
-                    'article_id' => $articleId,
-                    'hashtag_id' => $hashtagId,
-                ]);
-            }
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-            throw $e;
         }
 
         return response()->json(['result' => 'ok']);
