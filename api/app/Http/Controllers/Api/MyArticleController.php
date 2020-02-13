@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
+use App\Models\Article;
 use App\Services\ArticleService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -21,7 +22,8 @@ class MyArticleController extends Controller
     {
         $userId = $this->fetchUserId($request);
 
-        $articles  = DB::table('articles')
+        //Serviceクラスに切り出してもいいけどもう少し複雑になってからでよい
+        $articles  = Article::with(['user', 'hashtags'])
             ->where('user_id', '=', $userId)
             ->get();
 

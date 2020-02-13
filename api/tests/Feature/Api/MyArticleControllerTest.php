@@ -27,7 +27,6 @@ class MyArticleControllerTest extends TestCase
 
         $response->assertStatus(200);
 
-        //TODO userとhashtagがレスポンスに含まれてないので実装修正する
         $response->assertJsonStructure([
             '*' => [
                 'title',
@@ -38,6 +37,8 @@ class MyArticleControllerTest extends TestCase
                 'updated_at',
                 'created_at',
                 'id',
+                'user',
+                'hashtags',
             ]
         ]);
     }
