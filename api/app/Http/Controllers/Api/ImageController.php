@@ -2,22 +2,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\CreateImageRequest;
 
 class ImageController extends Controller
 {
-    public function create(Request $request)
+    public function create(CreateImageRequest $request)
     {
-        $params = $request->all();
-        $validation = Validator::make($params, [
-            'file' => 'required|file|image|mimes:jpeg,png|max:3000',
-        ]);
-
-        if ($validation->fails()) {
-            return response()->json(['errors' => $validation->errors()], 400);
-        }
-
         $fileName = $request->file('file')->store('public/uploaded');
 
         //TODO hostを環境変数から取得するように変更する
