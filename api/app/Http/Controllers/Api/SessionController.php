@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateSessionRequest;
 use App\Http\Requests\DestroySessionRequest;
-use Illuminate\Support\Facades\DB;
+use App\Models\Session;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -14,8 +15,7 @@ class SessionController extends Controller
     {
         $params = $request->validated();
 
-        $user = DB::table('users')
-            ->where('email', '=', $params['email'])
+        $user = User::where('email', '=', $params['email'])
             ->first();
 
         if (is_null($user)) {
@@ -26,21 +26,18 @@ class SessionController extends Controller
             return response()->json(['result' => 'error'], 404);
         }
 
-        $token = Str::random(50);
-        DB::table('sessions')->insert([
-             'user_id'  => $user->id,
-             'token' => $token,
-        ]);
+        $session = new Session();
+        $session->user_id = $user->id;
+        $session->token = Str::random(50);
 
-        return response()->json(['token' => $token]);
+        return response()->json(['token' => $session->token]);
     }
 
     public function destroy(DestroySessionRequest $request)
     {
         $p = $request->validated();
 
-        $session = DB::table('sessions')
-            ->where('token', '=', $p['token'])
+        $session = Session::where('token', '=', $p['token'])
             ->first();
 
         if (is_null($session)) {
@@ -52,9 +49,7 @@ class SessionController extends Controller
             return response()->json(['result' => 'error'], 404);
         }
 
-        DB::table('sessions')
-            ->where('token', '=', $p['token'])
-            ->delete();
+        $session->delete();
 
         return response()->json([], 204);
     }
