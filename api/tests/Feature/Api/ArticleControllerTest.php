@@ -11,17 +11,6 @@ class ArticleControllerTest extends TestCase
     /**
      * @test
      */
-    public function 記事が未登録のときに記事一覧APIたたくと空の配列がかえってくる()
-    {
-        $response = $this->json('GET', '/api/articles');
-
-        $response->assertStatus(200);
-        $response->assertExactJson([]);
-    }
-
-    /**
-     * @test
-     */
     public function 記事一覧APIたたくと記事一覧がかえってくる()
     {
         factory(Article::class)->create();
