@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateHashtagRequest;
 use App\Models\Hashtag;
-use Illuminate\Http\Request;
 
 class HashtagController extends Controller
 {
