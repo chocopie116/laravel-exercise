@@ -12,7 +12,7 @@ class ImageControllerTest extends TestCase
     /**
      * @test
      */
-    public function ハッシュタグ一覧APIたたくと一覧がかえってくる()
+    public function 画像作成APIをたたくとimgのurlがかえってくる()
     {
         Storage::fake('local');
 
