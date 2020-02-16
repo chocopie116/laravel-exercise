@@ -63,6 +63,16 @@ class HashtagControllerTest extends TestCase
     /**
      * @test
      */
+    public function ハッシュタグ作成時にtitleがないと400()
+    {
+        $response = $this->json('POST', "/api/hashtags/", [
+            ]);
+
+        $response->assertStatus(400);
+    }
+    /**
+     * @test
+     */
     public function ハッシュタグは作成できる()
     {
         $response = $this->json('POST', "/api/hashtags/", [
