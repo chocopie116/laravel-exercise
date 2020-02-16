@@ -28,4 +28,22 @@ class ImageControllerTest extends TestCase
         Storage::disk('local')->assertExists("public/uploaded/{$file->hashName()}");
         Storage::disk('local')->assertMissing("public/uploaded/something.png");
     }
+
+    /**
+     * @test
+     */
+    public function ３MBより大きい画像をなげると400()
+    {
+        Storage::fake('local');
+
+        $file = UploadedFile::fake()->image('something.png')->size(3001);
+
+        $response = $this->json('POST', '/api/images', [
+            'file'    => $file
+        ]);
+
+        $response->assertStatus(400);
+
+        Storage::disk('local')->assertMissing("public/uploaded/something.png");
+    }
 }
