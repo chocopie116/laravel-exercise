@@ -2,21 +2,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use DB;
+use App\Models\Hashtag;
 use Illuminate\Http\Request;
 
 class HashtagController extends Controller
 {
     public function index()
     {
-        $hashtags= DB::table('hashtags')->get();
+        $hashtags= Hashtag::all();
 
         return response()->json($hashtags);
     }
 
     public function show($id)
     {
-        $hashtags  = DB::table('hashtags')->find($id);
+        $hashtags  = Hashtag::find($id);
 
         return response()->json($hashtags);
     }
@@ -31,9 +31,9 @@ class HashtagController extends Controller
             return response()->json(['result' => 'error'], 400);
         }
 
-        DB::table('hashtags')->insert([
-             'title' => $title,
-        ]);
+        $hashtag = new Hashtag();
+        $hashtag->title = $title;
+        $hashtag->save();
 
         return response()->json(['result' => 'ok']);
     }
