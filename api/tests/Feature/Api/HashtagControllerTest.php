@@ -57,8 +57,7 @@ class HashtagControllerTest extends TestCase
     public function 存在しない記事IDで記事詳細APIをリクエストしたら404()
     {
         $response = $this->json('GET', '/api/hashtags/999999999');
-        //TODO あとで404にする
-        $response->assertStatus(200);
+        $response->assertStatus(404);
     }
 
     /**
@@ -70,7 +69,7 @@ class HashtagControllerTest extends TestCase
                 'title' => 'ハッシュタグ',
             ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
         $response->assertExactJson([
             'result'=> 'ok',
         ]);

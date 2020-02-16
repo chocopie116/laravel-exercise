@@ -16,7 +16,7 @@ class HashtagController extends Controller
 
     public function show($id)
     {
-        $hashtags  = Hashtag::find($id);
+        $hashtags  = Hashtag::findOrFail($id);
 
         return response()->json($hashtags);
     }
@@ -35,6 +35,8 @@ class HashtagController extends Controller
         $hashtag->title = $title;
         $hashtag->save();
 
-        return response()->json(['result' => 'ok']);
+        return response()->json([
+            'result' => 'ok'
+        ], 201);
     }
 }
