@@ -2,34 +2,23 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateUserRequest;
 use App\Mail\CompleteRegistrationMail;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function create(Request $request)
+    public function create(CreateUserRequest $request)
     {
-        $params = $request->all();
+        $params = $request->validated();
 
-        $validation = Validator::make($params, [
-            'name' => 'required|string|max:20',
-            'email' => 'required|string|max:30|unique:users',
-            'password' => 'required|string|min:10|max:50',
-        ]);
-
-        if ($validation->fails()) {
-            return response()->json(['result' => 'error'], 400);
-        }
-
-        DB::table('users')->insert([
-             'name'     => $params['name'],
-             'email'    => $params['email'],
-             'password' => Hash::make($params['password']),
-        ]);
+        $user = new User();
+        $user->name = $params['name'];
+        $user->email = $params['email'];
+        $user->password = Hash::make($params['name']);
+        $user->save();
 
         Mail::to($params['email'])->send(new CompleteRegistrationMail($params['name']));
 
