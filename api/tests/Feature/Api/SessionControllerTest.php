@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Api;
 
+use App\Models\Session;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -37,5 +38,18 @@ class SessionControllerTest extends TestCase
         ]);
 
         $response->assertStatus(404);
+    }
+
+    public function testセッションを削除できたら204がかえる()
+    {
+        $session = factory(Session::class)->create();
+
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer $session->token"
+        ])->json('DELETE', '/api/sessions', [
+            'token' => $session->token,
+        ]);
+
+        $response->assertStatus(204);
     }
 }
