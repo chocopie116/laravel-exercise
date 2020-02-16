@@ -28,6 +28,8 @@ class HashtagArticleControllerTest extends TestCase
                 'updated_at',
                 'created_at',
                 'id',
+                'user',
+                'hashtags'
             ]
         ]);
     }
