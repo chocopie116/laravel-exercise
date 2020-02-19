@@ -4,10 +4,12 @@ namespace Tests\Feature\Api;
 
 use App\Models\Article;
 use App\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class ArticleControllerTest extends TestCase
+class ArticleControllertest extends testcase
 {
+    use RefreshDatabase;
     /**
      * @test
      */
@@ -18,18 +20,73 @@ class ArticleControllerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
-            '*' => [
-                'title',
-                'content',
-                'user_id',
-                'draft',
-                'header_image_url',
-                'updated_at',
-                'created_at',
-                'id',
-                'user',
-                'hashtags'
-            ]
+            'current_page',
+            'data' => [
+                '*' => [
+                    'title',
+                    'content',
+                    'user_id',
+                    'draft',
+                    'header_image_url',
+                    'updated_at',
+                    'created_at',
+                    'id',
+                    'user',
+                    'hashtags'
+                ]
+            ],
+            'first_page_url',
+            'from',
+            'last_page',
+            'last_page_url',
+            'next_page_url',
+            'path',
+            'per_page',
+            'prev_page_url',
+            'to',
+            'total',
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function 記事一覧APIでページパラメータを指定したら２ページ目のページネーションができてるはず()
+    {
+        factory(Article::class, 11)->create();
+        $response = $this->json('GET', '/api/articles?page=2');
+
+        $response->assertStatus(200);
+
+        //TODO テストデータによっては3になるかもしれないので要調整
+        $response->assertJson(['current_page' =>2]);
+
+        $response->assertJsonStructure([
+            'current_page',
+            'data' => [
+                '*' => [
+                    'title',
+                    'content',
+                    'user_id',
+                    'draft',
+                    'header_image_url',
+                    'updated_at',
+                    'created_at',
+                    'id',
+                    'user',
+                    'hashtags'
+                ]
+            ],
+            'first_page_url',
+            'from',
+            'last_page',
+            'last_page_url',
+            'next_page_url',
+            'path',
+            'per_page',
+            'prev_page_url',
+            'to',
+            'total',
         ]);
     }
 
