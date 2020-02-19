@@ -17,7 +17,7 @@ class UserController extends Controller
         $user = new User();
         $user->name = $params['name'];
         $user->email = $params['email'];
-        $user->password = Hash::make($params['name']);
+        $user->password = Hash::make($params['password']);
         $user->save();
 
         Mail::to($params['email'])->send(new CompleteRegistrationMail($params['name']));
