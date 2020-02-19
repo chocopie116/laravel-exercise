@@ -29,6 +29,7 @@ class SessionController extends Controller
         $session = new Session();
         $session->user_id = $user->id;
         $session->token = Str::random(50);
+        $session->save();
 
         return response()->json(['token' => $session->token]);
     }
