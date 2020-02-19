@@ -11,7 +11,7 @@ class ArticleController extends Controller
     {
         $articles  = Article::with(['user', 'hashtags'])
             ->published()
-            ->orderBy('created_at', 'desc')
+            ->latest()
             ->paginate(10);
 
         return response()->json($articles);

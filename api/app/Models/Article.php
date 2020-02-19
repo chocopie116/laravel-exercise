@@ -13,6 +13,11 @@ class Article extends Model
         return $query->where('draft', false);
     }
 
+    public function scopeLatest(Builder $query)
+    {
+        return $query->orderBy('created_at', 'desc');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
